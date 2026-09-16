@@ -1,0 +1,4 @@
+/bin/
+/_ai_audit_ready/
+*.test
+coverage.out
