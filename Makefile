@@ -1,4 +1,4 @@
-.PHONY: build test check fmt
+.PHONY: build test vet check ci fmt fmt-check snapshot release-check release-test
 VERSION ?= dev
 
 build:
@@ -7,10 +7,26 @@ build:
 test:
 	go test -race ./...
 
-check:
+vet:
 	go vet ./...
-	go test -race ./...
-	@test -z "$$(gofmt -l cmd internal)"
+
+fmt-check:
+	@unformatted="$$(gofmt -l cmd internal)"; status=$$?; \
+	if [ $$status -ne 0 ]; then exit $$status; fi; \
+	if [ -n "$$unformatted" ]; then echo "Files requiring gofmt:"; echo "$$unformatted"; exit 1; fi
+
+check: vet fmt-check test
+
+release-test:
+	python3 -m unittest discover -s scripts -p 'test_*.py'
+
+ci: build check release-test
 
 fmt:
 	gofmt -w cmd internal
+
+snapshot:
+	goreleaser release --snapshot --clean
+
+release-check:
+	goreleaser check

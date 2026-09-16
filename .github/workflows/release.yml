@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  # Only merged code is checked out; this also supports releases from fork PRs.
+  pull_request_target:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+# Releases must compute versions and push tags one at a time.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: >-
+      github.event.pull_request.merged == true &&
+      (contains(github.event.pull_request.labels.*.name, 'release:major') ||
+       contains(github.event.pull_request.labels.*.name, 'release:minor') ||
+       contains(github.event.pull_request.labels.*.name, 'release:patch'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Check merged source
+        run: make ci
+      - name: Compute version and tag locally
+        id: version
+        env:
+          MAJOR: ${{ contains(github.event.pull_request.labels.*.name, 'release:major') }}
+          MINOR: ${{ contains(github.event.pull_request.labels.*.name, 'release:minor') }}
+        run: |
+          python3 scripts/release-version.py > "$RUNNER_TEMP/version-output.txt"
+          cat "$RUNNER_TEMP/version-output.txt" >> "$GITHUB_OUTPUT"
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          next="$(sed -n 's/^next=//p' "$RUNNER_TEMP/version-output.txt")"
+          if ! git rev-parse --verify "refs/tags/$next" >/dev/null 2>&1; then
+            git tag -a "$next" -m "$next"
+          fi
+      - uses: goreleaser/goreleaser-action@v6
+        with:
+          version: '~> v2'
+          args: check
+      - name: Build release artifacts before publishing
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: '~> v2'
+          args: release --clean --skip=publish
+      - name: Verify checksums
+        run: |
+          cd dist
+          sha256sum --check checksums.txt
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEXT: ${{ steps.version.outputs.next }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+        run: |
+          git push origin "refs/tags/$NEXT"
+          if gh release view "$NEXT" --json isDraft > release-state.json 2>/dev/null; then
+            if ! jq -e '.isDraft == true' release-state.json >/dev/null; then
+              echo "Release $NEXT is already published; nothing to do."
+              exit 0
+            fi
+          else
+            gh release create "$NEXT" --verify-tag --draft --title "$NEXT" --generate-notes
+          fi
+          gh release upload "$NEXT" dist/*.tar.gz dist/checksums.txt --clobber
+          gh release edit "$NEXT" --draft=false --prerelease="$PRERELEASE"

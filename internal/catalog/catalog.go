@@ -15,12 +15,12 @@ import (
 	"sync"
 	"time"
 
-	"polyaudit/internal/bundle"
-	"polyaudit/internal/clean"
-	"polyaudit/internal/discover"
-	"polyaudit/internal/manifest"
-	"polyaudit/internal/model"
-	"polyaudit/internal/policy"
+	"github.com/FormlessEvoker/polyaudit/internal/bundle"
+	"github.com/FormlessEvoker/polyaudit/internal/clean"
+	"github.com/FormlessEvoker/polyaudit/internal/discover"
+	"github.com/FormlessEvoker/polyaudit/internal/manifest"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/policy"
 )
 
 type Options struct {

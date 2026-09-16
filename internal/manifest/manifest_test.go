@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
 )
 
 func readFixture(t *testing.T, file, content string, extras map[string]string) *os.Root {

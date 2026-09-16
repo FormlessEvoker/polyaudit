@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
 )
 
 func TestFlagsAfterRootAndDryRunJSON(t *testing.T) {

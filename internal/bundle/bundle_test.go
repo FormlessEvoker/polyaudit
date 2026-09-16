@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"polyaudit/internal/model"
-	"polyaudit/internal/policy"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/policy"
 )
 
 type cancelWriter struct{ cancel context.CancelFunc }

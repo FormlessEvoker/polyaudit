@@ -1,0 +1,42 @@
+version: 2
+project_name: polyaudit
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - id: polyaudit
+    main: ./cmd/polyaudit
+    binary: polyaudit
+    env: [CGO_ENABLED=0]
+    goos: [darwin, linux]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags:
+      - -s -w -X main.version={{ .Tag }}
+    mod_timestamp: '{{ .CommitTimestamp }}'
+
+archives:
+  - id: polyaudit
+    ids: [polyaudit]
+    formats: [tar.gz]
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    files:
+      - README.md
+      - docs/*
+      - prompts/*
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+snapshot:
+  version_template: '{{ incpatch .Version }}-next'
+
+changelog:
+  disable: true
+
+# The workflow uploads verified artifacts to a draft, then publishes it.
+release:
+  disable: true

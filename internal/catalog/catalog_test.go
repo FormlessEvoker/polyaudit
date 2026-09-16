@@ -15,7 +15,7 @@ import (
 	"strings"
 	"testing"
 
-	"polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
 )
 
 func put(t *testing.T, root, name, value string) {
