@@ -5,65 +5,48 @@ discovers projects, extracts declared dependencies, optionally removes build
 folders, and writes bounded source packs plus a machine-readable inventory.
 It never runs repository code, installs project dependencies, or calls an AI API.
 
-## Install
+## What it produces
 
-Download the archive for your OS and architecture from
-[GitHub Releases](https://github.com/FormlessEvoker/polyaudit/releases).
-The initial `0.x` releases appear as prereleases.
-
-For example, after `v0.1.0` is published, on an Apple Silicon Mac:
+Point polyaudit at a catalog of repositories to create a machine-readable
+inventory and bounded source packs for each detected project. The inventory
+captures declared dependencies, language metadata, nested-project relationships,
+and diagnostics; the packs give an analysis tool the relevant source without
+build products, dependency directories, or common sensitive files.
 
 ```sh
-curl -fLO https://github.com/FormlessEvoker/polyaudit/releases/download/v0.1.0/polyaudit_0.1.0_darwin_arm64.tar.gz
-curl -fLO https://github.com/FormlessEvoker/polyaudit/releases/download/v0.1.0/checksums.txt
-shasum -a 256 -c checksums.txt --ignore-missing
-mkdir -p "$HOME/.local/bin"
-tar -xzf polyaudit_0.1.0_darwin_arm64.tar.gz polyaudit
-install -m 755 polyaudit "$HOME/.local/bin/polyaudit"
-export PATH="$HOME/.local/bin:$PATH"
-polyaudit version
+polyaudit scan /path/to/catalog --workers 8
 ```
 
-Use `darwin_amd64` for Intel Macs, or `linux_amd64` / `linux_arm64` for Linux.
-On Linux, verify with `sha256sum --check --ignore-missing checksums.txt`.
-Add the PATH export to your shell configuration to keep it across sessions.
+Add `--clean --dry-run` to preview removable build artifacts, or `--clean` to
+remove them before creating packs.
 
-With Go 1.26 or newer, you can also install a published tag directly:
+## Get started
+
+With Go 1.26 or newer, install a published version directly:
 
 ```sh
 go install github.com/FormlessEvoker/polyaudit/cmd/polyaudit@v0.1.0
-# Ensure $(go env GOPATH)/bin is in PATH (or use your configured GOBIN).
 polyaudit version
 ```
 
-See [releasing](docs/RELEASING.md) for CI checks and release instructions.
+For individual macOS or Linux downloads, see
+[GitHub Releases](https://github.com/FormlessEvoker/polyaudit/releases).
+Initial `0.x` releases appear as prereleases. See the
+[installation guide](docs/INSTALLING.md) for checksum verification, manual
+installation, and building from source.
 
-## Build and run
-
-Requires Go **1.26 or newer**. The two direct dependencies are `golang.org/x/mod`
-for Go manifests and `gopkg.in/yaml.v3` for Ansible YAML; versions are pinned in
-`go.mod` and `go.sum`.
+## Usage
 
 ```sh
-make build
-./bin/polyaudit scan /path/to/catalog --workers 8
-
 # Preview metadata and proposed deletions. No filesystem writes.
-./bin/polyaudit scan /path/to/catalog --clean --dry-run > cleanup-plan.json
+polyaudit scan /path/to/catalog --clean --dry-run > cleanup-plan.json
 
 # Delete the named artifact folders and create packs.
-./bin/polyaudit scan /path/to/catalog --clean
+polyaudit scan /path/to/catalog --clean
 
 # Optional gzip, different destination, and explicit exclusions.
-./bin/polyaudit scan /path/to/catalog --gzip --output /path/to/audit-output \
+polyaudit scan /path/to/catalog --gzip --output /path/to/audit-output \
   --exclude legacy/customer-data --exclude web/config/private.json
-```
-
-In this workspace, example repositories live in `../sample-repos`:
-
-```sh
-./bin/polyaudit scan ../sample-repos --clean --dry-run
-./bin/polyaudit scan ../sample-repos
 ```
 
 ## Outputs
