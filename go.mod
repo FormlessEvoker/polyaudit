@@ -1,4 +1,4 @@
-module polyaudit
+module github.com/FormlessEvoker/polyaudit
 
 go 1.26.0
 

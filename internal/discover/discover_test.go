@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"polyaudit/internal/policy"
+	"github.com/FormlessEvoker/polyaudit/internal/policy"
 )
 
 func TestWideTreeDoesNotDeadlock(t *testing.T) {

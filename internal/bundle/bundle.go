@@ -14,9 +14,9 @@ import (
 	"path"
 	"unicode/utf8"
 
-	"polyaudit/internal/fsutil"
-	"polyaudit/internal/model"
-	"polyaudit/internal/policy"
+	"github.com/FormlessEvoker/polyaudit/internal/fsutil"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/policy"
 )
 
 const MaxOmissionDetails = 1000

@@ -7,9 +7,9 @@ import (
 	"os"
 	"path"
 
-	"polyaudit/internal/fsutil"
-	"polyaudit/internal/model"
-	"polyaudit/internal/policy"
+	"github.com/FormlessEvoker/polyaudit/internal/fsutil"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/policy"
 )
 
 func Run(ctx context.Context, root *os.Root, project string, boundaries map[string]bool, rules policy.Policy, dryRun bool) ([]model.Cleanup, []model.Diagnostic) {

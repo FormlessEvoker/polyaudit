@@ -12,10 +12,10 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/FormlessEvoker/polyaudit/internal/fsutil"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
 	"golang.org/x/mod/modfile"
 	"gopkg.in/yaml.v3"
-	"polyaudit/internal/fsutil"
-	"polyaudit/internal/model"
 )
 
 const MaxBytes = 2 << 20

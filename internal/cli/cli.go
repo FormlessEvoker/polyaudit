@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"polyaudit/internal/catalog"
+	"github.com/FormlessEvoker/polyaudit/internal/catalog"
 )
 
 type excludes []string

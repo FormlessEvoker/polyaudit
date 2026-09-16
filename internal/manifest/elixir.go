@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
 )
 
 type token struct{ kind, text string }

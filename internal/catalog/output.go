@@ -8,7 +8,7 @@ import (
 	"os"
 	"path"
 
-	"polyaudit/internal/model"
+	"github.com/FormlessEvoker/polyaudit/internal/model"
 )
 
 // Each run gets immutable packs. The inventory is the commit point, replaced
